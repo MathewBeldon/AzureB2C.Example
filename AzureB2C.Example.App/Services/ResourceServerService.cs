@@ -1,7 +1,9 @@
 ﻿using AzureB2C.Example.App.Models;
 using Microsoft.Identity.Web;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace AzureB2C.Example.App.Services
 {
@@ -29,11 +31,17 @@ namespace AzureB2C.Example.App.Services
             _resourceServerScope = configuration["ResourceServer:Scope"];
             _resourceServerBaseAddress = configuration["ResourceServer:BaseAddress"];
         }
-        public async Task<ResourceServerResponse> GetAsync()
+
+        public async Task<string> GetAsync()
         {
             await PrepareAuthenticatedClient();
+            var response = await _httpClient.GetAsync($"{ _resourceServerBaseAddress}/api/message");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
 
-            throw new NotImplementedException();            
+            throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");         
         }
 
         private async Task PrepareAuthenticatedClient()

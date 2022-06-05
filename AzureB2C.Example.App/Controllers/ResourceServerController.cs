@@ -16,7 +16,7 @@ namespace AzureB2C.Example.App.Controllers
         [AuthorizeForScopes(ScopeKeySection = "ResourceServer:Scope")]
         public async Task<ActionResult> Index()
         {
-            return View(await _resourceServerService.GetAsync());
+            return View("Index", await _resourceServerService.GetAsync());
         }
     }
 }
